@@ -125,6 +125,29 @@ class LinkedList {
         return true;
     }
 
+    remove(index) {
+        if (index === 0) {
+            return this.shift();
+        }
+
+        if (index === this.length - 1) {
+            return this.pop();
+        }
+
+        if(this.#isIndexOutOfRange(index)) {
+            return null;
+        }
+
+        const previousNode = this.get(index - 1);
+        const nodeToRemove = previousNode.next;
+
+        previousNode.next = nodeToRemove.next;
+        nodeToRemove.next = null;
+
+        this.length--;
+        return nodeToRemove;
+    }
+
     #isIndexOutOfRange(index) {
         return (index >= this.length || index < 0);
     }

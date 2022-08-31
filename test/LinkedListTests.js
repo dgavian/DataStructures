@@ -81,7 +81,6 @@ describe('LinkedList', function() {
         });
 
         it('should return the tail from a linked list with multiple items, remove that item from the list, and repoint the tail accordingly', () => {
-            headVal = 1;
             const initialLength = 5;
             const expectedLength = 4;
             const initialTailVal = 8;
@@ -159,7 +158,6 @@ describe('LinkedList', function() {
         });
 
         it('should return the head from a linked list with multiple items, remove that item from the list, and repoint the head accordingly', () => {
-            headVal = 1;
             const initialLength = 5;
             const expectedLength = 4;
             const initialHeadVal = 1;
@@ -346,11 +344,76 @@ describe('LinkedList', function() {
         });
     });
 
+    describe('remove', function() {
+        it('should remove the first node for an index of zero', () => {
+            const index = 0;
+            const expectedLength = 4;
+            const expectedHeadVal = 2;
+            const sut = makePopulatedLinkedList();
+            const expected = sut.head;
+
+            const actual = sut.remove(index);
+
+            actual.should.equal(expected);
+            sut.length.should.equal(expectedLength);
+            sut.head.value.should.equal(expectedHeadVal);
+        });
+
+        it('should remove the last node for an index of 1 less than the size of the linked list', () => {
+            const index = 4;
+            const expectedLength = 4;
+            const expectedTailVal = 5;
+            const sut = makePopulatedLinkedList();
+            const expected = sut.tail;
+
+            const actual = sut.remove(index);
+
+            actual.should.equal(expected);
+            sut.length.should.equal(expectedLength);
+            sut.tail.value.should.equal(expectedTailVal);
+        });
+
+        it('should remove the expected node for in the middle of the linked list', () => {
+            const index = 2;
+            const expectedLength = 4;
+            const sut = makePopulatedLinkedList();
+            const expectedVal = 3;
+
+            const actual = sut.remove(index);
+
+            actual.value.should.equal(expectedVal);
+            sut.length.should.equal(expectedLength);
+        });
+
+        it('should not remove anything for a negative index', () => {
+            const index = -1;
+            const expectedLength = 5;
+            const sut = makePopulatedLinkedList();
+
+            const actual = sut.remove(index);
+
+            sut.length.should.equal(expectedLength);
+            should.not.exist(actual);
+        });
+
+        it('should not remove anything for an out of bounds index', () => {
+            const index = 5;
+            const expectedLength = 5;
+            const sut = makePopulatedLinkedList();
+
+            const actual = sut.remove(index);
+
+            sut.length.should.equal(expectedLength);
+            should.not.exist(actual);
+        });
+    });
+
     function makeSut() {
         return new LinkedList(headVal);
     }
 
     function makePopulatedLinkedList() {
+        headVal = 1;
         const sut = makeSut();
         return sut.push(2).push(3).push(5).push(8);
     }
