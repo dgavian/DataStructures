@@ -117,7 +117,7 @@ class LinkedList {
 
         const newNode = new Node(value);
         const previousNode = this.get(index - 1);
-        
+
         newNode.next = previousNode.next;
         previousNode.next = newNode;
 
@@ -134,7 +134,7 @@ class LinkedList {
             return this.pop();
         }
 
-        if(this.#isIndexOutOfRange(index)) {
+        if (this.#isIndexOutOfRange(index)) {
             return null;
         }
 
@@ -146,6 +146,23 @@ class LinkedList {
 
         this.length--;
         return nodeToRemove;
+    }
+
+    reverse() {
+        let currentNode = this.head;
+        this.head = this.tail;
+        this.tail = currentNode;
+        let existingNext = null;
+        let existingPrevious = null;
+        
+        while (currentNode) {
+            existingNext = currentNode.next;
+            currentNode.next = existingPrevious;
+            existingPrevious = currentNode;
+            currentNode = existingNext;
+        }
+
+        return this;
     }
 
     #isIndexOutOfRange(index) {

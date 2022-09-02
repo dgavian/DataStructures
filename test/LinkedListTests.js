@@ -408,6 +408,69 @@ describe('LinkedList', function() {
         });
     });
 
+    describe('reverse', function() {
+        it('should reverse a populated linked list', () => {
+            const expected = [8, 5, 3, 2, 1];
+            const len = expected.length;
+            const sut = makePopulatedLinkedList();
+
+            const actual = sut.reverse();
+
+            actual.head.value.should.equal(expected[0])
+            actual.tail.value.should.equal(expected[len - 1]);
+            let currentNode = actual.head;
+            for (let i = 0; i < len; i++) {
+                currentNode.value.should.equal(expected[i]);
+                currentNode = currentNode.next;
+            }
+            should.not.exist(currentNode);
+            should.not.exist(actual.tail.next);
+        });
+
+        it('should reverse a small linked list', () => {
+            headVal = 9;
+            const expected = [10, 9];
+            const len = expected.length;
+            const sut = makeSut().push(10);
+
+            const actual = sut.reverse();
+
+            actual.head.value.should.equal(expected[0])
+            actual.tail.value.should.equal(expected[len - 1]);
+            let currentNode = actual.head;
+            for (let i = 0; i < len; i++) {
+                currentNode.value.should.equal(expected[i]);
+                currentNode = currentNode.next;
+            }
+            should.not.exist(currentNode);
+            should.not.exist(actual.tail.next);
+        });
+
+        it('should take no action on an empty linked list', () => {
+            const expectedLength = 0;
+            const sut = makeEmptyLinkedList();
+
+            const actual = sut.reverse();
+
+            should.not.exist(actual.head);
+            should.not.exist(actual.tail);
+            actual.length.should.equal(expectedLength);
+        });
+
+        it('should take no action on a linked list with 1 item', () => {
+            headVal = 42;
+            const expectedLength = 1;
+            const sut = makeSut();
+
+            const actual = sut.reverse();
+
+
+            actual.length.should.equal(expectedLength);
+            actual.tail.should.equal(actual.head);
+            should.not.exist(actual.tail.next);
+        });
+    });
+
     function makeSut() {
         return new LinkedList(headVal);
     }
