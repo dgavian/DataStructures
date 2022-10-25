@@ -1,39 +1,27 @@
 const chai = require('chai');
 const should = chai.should();
 
-const { LinkedList } = require('../app/LinkedList');
+const { DoublyLinkedList } = require('../app/DoublyLinkedList');
 
-describe('LinkedList', function() {
+describe('DoublyLinkedList', function() {
     let headVal;
     describe('constructor', function() {
-        it('should create a linked list with one node with the supplied value', () => {
+        it('should create a doubly linked list with one node with the supplied value', () => {
             const value = 42;
             const expectedLength = 1;
 
-            const sut = new LinkedList(value);
+            const sut = new DoublyLinkedList(value);
 
             sut.length.should.equal(expectedLength);
             sut.head.should.equal(sut.tail);
             sut.head.value.should.equal(value);
             should.not.exist(sut.tail.next);
+            should.not.exist(sut.tail.prev);
         });
     });
 
     describe('push', function() {
-        it('should add a new node with the value as the new head and tail of an empty linked list', () => {
-            const newVal = 42;
-            const expectedLength = 1;
-            const sut = makeEmptyLinkedList();
-
-            sut.push(newVal);
-
-            sut.length.should.equal(expectedLength);
-            sut.head.should.equal(sut.tail);
-            sut.head.value.should.equal(newVal);
-            should.not.exist(sut.tail.next);
-        });
-
-        it('should add a new node with the value as the new tail of an existing linked list', () => {
+        it('should add a new node with the value as the new tail of an existing doubly linked list', () => {
             headVal = 42;
             const newVal = 43;
             const expectedLength = 2;
@@ -45,28 +33,51 @@ describe('LinkedList', function() {
             sut.tail.value.should.equal(newVal);
             sut.head.value.should.equal(headVal);
             sut.head.next.should.equal(sut.tail);
+            sut.tail.prev.should.equal(sut.head);
             should.not.exist(sut.tail.next);
+            should.not.exist(sut.head.prev);
         });
 
-        it('should add multiple new nodes with chained calls', () => {
-            headVal = 42;
-            const firstVal = 1;
-            const secondVal = 2;
-            const expectedLength = 3;
-            const sut = makeSut();
+        it('should add a new node with the value as the new head and tail of an empty doubly linked list', () => {
+            const newVal = 42;
+            const expectedLength = 1;
+            const sut = makeEmptyDoublyLinkedList();
 
-            sut.push(firstVal).push(secondVal);
+            sut.push(newVal);
 
             sut.length.should.equal(expectedLength);
-            sut.tail.value.should.equal(secondVal);
-            sut.head.next.should.not.equal(sut.tail);
-            sut.head.next.value.should.equal(firstVal);
-            should.not.exist(sut.tail.next);
+            sut.head.should.equal(sut.tail);
+            sut.head.value.should.equal(newVal);
+            should.not.exist(sut.head.next);
+            should.not.exist(sut.tail.prev);
         });
     });
 
     describe('pop', function() {
-        it('should return the only node from a linked list with one item, and empty the list', () => {
+        it('should return the tail from a doubly linked list with multiple items, remove that item from the list, and update the tail accordingly', () => {
+            const initialLength = 5;
+            const expectedLength = 4;
+            const initialTailVal = 8;
+            const expectedTailVal = 5;
+            const expectedPrevVal = 3;
+            const sut = makePopulatedDoublyLinkedList();
+            const initialHead = sut.head;
+            sut.length.should.equal(initialLength);
+            sut.tail.value.should.equal(initialTailVal);
+
+            const actual = sut.pop();
+
+            actual.value.should.equal(initialTailVal);
+            should.not.exist(actual.prev);
+            should.not.exist(actual.next);
+            sut.length.should.equal(expectedLength);
+            sut.head.should.equal(initialHead);
+            sut.tail.value.should.equal(expectedTailVal);
+            sut.tail.prev.value.should.equal(expectedPrevVal);
+            should.not.exist(sut.tail.next);
+        });
+
+        it('should return the only node from a doubly linked list with one item, and empty the list', () => {
             headVal = 42;
             const expectedLength = 0;
             const sut = makeSut();
@@ -75,33 +86,15 @@ describe('LinkedList', function() {
             const actual = sut.pop();
 
             actual.should.equal(expected);
+            should.not.exist(actual.prev);
+            should.not.exist(actual.next);
             sut.length.should.equal(expectedLength);
             should.not.exist(sut.head);
             should.not.exist(sut.tail);
         });
 
-        it('should return the tail from a linked list with multiple items, remove that item from the list, and repoint the tail accordingly', () => {
-            const initialLength = 5;
-            const expectedLength = 4;
-            const initialTailVal = 8;
-            const expectedTailVal = 5;
-            const sut = makePopulatedLinkedList();
-            const expected = sut.tail;
-            const initialHead = sut.head;
-            sut.length.should.equal(initialLength);
-            sut.tail.value.should.equal(initialTailVal);
-
-            const actual = sut.pop();
-
-            actual.should.equal(expected);
-            sut.length.should.equal(expectedLength);
-            sut.head.should.equal(initialHead);
-            sut.tail.value.should.equal(expectedTailVal);
-            should.not.exist(sut.tail.next);
-        });
-
         it('should return null from an already empty list', () => {
-            const sut = makeEmptyLinkedList();
+            const sut = makeEmptyDoublyLinkedList();
             const expectedLength = 0;
 
             const actual = sut.pop();
@@ -114,7 +107,7 @@ describe('LinkedList', function() {
     });
 
     describe('unshift', function() {
-        it('should add a new node as the new head of an existing linked list', () => {
+        it('should add a new node as the new head of an existing doubly linked list', () => {
             headVal = 42;
             const newVal = 41;
             const expectedLength = 2;
@@ -125,13 +118,16 @@ describe('LinkedList', function() {
             sut.length.should.equal(expectedLength);
             sut.head.value.should.equal(newVal);
             sut.head.next.value.should.equal(headVal);
+            sut.head.next.should.equal(sut.tail);
+            sut.tail.prev.should.equal(sut.head);
             should.not.exist(sut.tail.next);
+            should.not.exist(sut.head.prev);
         });
 
         it('should add a new node with the value as the new head and tail of an empty linked list', () => {
             const newVal = 42;
             const expectedLength = 1;
-            const sut = makeEmptyLinkedList();
+            const sut = makeEmptyDoublyLinkedList();
 
             sut.unshift(newVal);
 
@@ -139,11 +135,12 @@ describe('LinkedList', function() {
             sut.head.should.equal(sut.tail);
             sut.head.value.should.equal(newVal);
             should.not.exist(sut.tail.next);
+            should.not.exist(sut.tail.prev);
         });
     });
 
     describe('shift', function() {
-        it('should return the only node from a linked list with one item, and empty the list', () => {
+        it('should return the only node from a doubly linked list with one item, and empty the list', () => {
             headVal = 42;
             const expectedLength = 0;
             const sut = makeSut();
@@ -157,12 +154,12 @@ describe('LinkedList', function() {
             should.not.exist(sut.tail);
         });
 
-        it('should return the head from a linked list with multiple items, remove that item from the list, and repoint the head accordingly', () => {
+        it('should return the head from a doubly linked list with multiple items, remove that item from the list, and repoint the head accordingly', () => {
             const initialLength = 5;
             const expectedLength = 4;
             const initialHeadVal = 1;
             const expectedHeadVal = 2;
-            const sut = makePopulatedLinkedList();
+            const sut = makePopulatedDoublyLinkedList();
             const expected = sut.head;
             const initialTail = sut.tail;
             sut.length.should.equal(initialLength);
@@ -172,14 +169,16 @@ describe('LinkedList', function() {
 
             actual.should.equal(expected);
             should.not.exist(actual.next);
+            should.not.exist(actual.prev);
             sut.length.should.equal(expectedLength);
             sut.tail.should.equal(initialTail);
             sut.head.value.should.equal(expectedHeadVal);
             should.not.exist(sut.tail.next);
+            sut.tail.prev.should.be.ok;
         });
 
         it('should return null from an already empty list', () => {
-            const sut = makeEmptyLinkedList();
+            const sut = makeEmptyDoublyLinkedList();
             const expectedLength = 0;
 
             const actual = sut.shift();
@@ -204,7 +203,7 @@ describe('LinkedList', function() {
         });
 
         it('should return null for an out of bounds index', () => {
-            const sut = makePopulatedLinkedList();
+            const sut = makePopulatedDoublyLinkedList();
             const index = sut.length;
 
             const actual = sut.get(index);
@@ -213,7 +212,7 @@ describe('LinkedList', function() {
         });
 
         it('should return null for an empty list', () => {
-            const sut = makeEmptyLinkedList();
+            const sut = makeEmptyDoublyLinkedList();
             const index = 0;
 
             const actual = sut.get(index);
@@ -223,7 +222,7 @@ describe('LinkedList', function() {
 
         it('should return the tail for an index one less than the size of the linked list', () => {
             const index = 4;
-            const sut = makePopulatedLinkedList();
+            const sut = makePopulatedDoublyLinkedList();
             const expected = sut.tail;
 
             const actual = sut.get(index);
@@ -231,10 +230,20 @@ describe('LinkedList', function() {
             actual.should.equal(expected);
         });
 
-        it('should return the expected node for an index in the middle of the linked list', () => {
+        it('should return the expected node for an index in the middle of the list', () => {
             const index = 2;
-            const sut = makePopulatedLinkedList();
+            const sut = makePopulatedDoublyLinkedList();
             const expectedValue = 3;
+
+            const actual = sut.get(index);
+
+            actual.value.should.equal(expectedValue);
+        });
+
+        it('should return the expected node for an index near the end of the list', () => {
+            const index = 3;
+            const sut = makePopulatedDoublyLinkedList();
+            const expectedValue = 5;
 
             const actual = sut.get(index);
 
@@ -245,8 +254,20 @@ describe('LinkedList', function() {
     describe('set', function() {
         it('should set the expected node to the expected value', () => {
             const index = 2;
-            const sut = makePopulatedLinkedList();
+            const sut = makePopulatedDoublyLinkedList();
             const newValue = 9;
+
+            const actual = sut.set(index, newValue);
+            const node = sut.get(index);
+
+            actual.should.be.true;
+            node.value.should.equal(newValue);
+        });
+
+        it('should set the expected node near the end of the list to the expected value', () => {
+            const index = 3;
+            const sut = makePopulatedDoublyLinkedList();
+            const newValue = 42;
 
             const actual = sut.set(index, newValue);
             const node = sut.get(index);
@@ -271,7 +292,7 @@ describe('LinkedList', function() {
 
     describe('insert', function() {
         it('should insert a node at the expected index', () => {
-            const sut = makePopulatedLinkedList();
+            const sut = makePopulatedDoublyLinkedList();
             const index = 1;
             const oldValue = 2;
             const newValue = 42;
@@ -279,12 +300,15 @@ describe('LinkedList', function() {
 
             const actual = sut.insert(index, newValue);
             const newItem = sut.get(index);
+            const oldItem = newItem.next;
 
             actual.should.be.true;
             sut.length.should.equal(expectedLength);
             newItem.value.should.equal(newValue);
-            newItem.next.value.should.equal(oldValue);
+            oldItem.value.should.equal(oldValue);
+            oldItem.prev.should.equal(newItem);
             sut.head.next.should.equal(newItem);
+            newItem.prev.should.equal(sut.head);
         });
 
         it('should add a new node as the new head for an index of zero', () => {
@@ -295,11 +319,13 @@ describe('LinkedList', function() {
             const sut = makeSut();
 
             const actual = sut.insert(index, newVal);
+            const newHead = actual.head;
 
             actual.should.equal(sut);
             actual.length.should.equal(expectedLength);
-            actual.head.value.should.equal(newVal);
-            actual.head.next.value.should.equal(headVal);
+            newHead.value.should.equal(newVal);
+            newHead.next.value.should.equal(headVal);
+            actual.tail.prev.should.equal(newHead);
             should.not.exist(actual.tail.next);
         });
 
@@ -307,13 +333,15 @@ describe('LinkedList', function() {
             const newVal = 41;
             const expectedLength = 6;
             const index = 5;
-            const sut = makePopulatedLinkedList();
+            const sut = makePopulatedDoublyLinkedList();
 
+            const oldTail = sut.tail;
             const actual = sut.insert(index, newVal);
 
             actual.should.equal(sut);
             actual.length.should.equal(expectedLength);
             actual.tail.value.should.equal(newVal);
+            actual.tail.prev.should.equal(oldTail);
             should.not.exist(actual.tail.next);
         });
 
@@ -321,7 +349,7 @@ describe('LinkedList', function() {
             const newVal = 41;
             const expectedLength = 5;
             const index = -1;
-            const sut = makePopulatedLinkedList();
+            const sut = makePopulatedDoublyLinkedList();
 
             const actual = sut.insert(index, newVal);
 
@@ -334,13 +362,12 @@ describe('LinkedList', function() {
             const newVal = 41;
             const expectedLength = 5;
             const index = 6;
-            const sut = makePopulatedLinkedList();
+            const sut = makePopulatedDoublyLinkedList();
 
             const actual = sut.insert(index, newVal);
 
             actual.should.be.false;
             sut.length.should.equal(expectedLength);
-            sut.head.value.should.not.equal(newVal);
         });
     });
 
@@ -349,7 +376,7 @@ describe('LinkedList', function() {
             const index = 0;
             const expectedLength = 4;
             const expectedHeadVal = 2;
-            const sut = makePopulatedLinkedList();
+            const sut = makePopulatedDoublyLinkedList();
             const expected = sut.head;
 
             const actual = sut.remove(index);
@@ -357,13 +384,15 @@ describe('LinkedList', function() {
             actual.should.equal(expected);
             sut.length.should.equal(expectedLength);
             sut.head.value.should.equal(expectedHeadVal);
+            should.not.exist(sut.head.prev);
         });
 
         it('should remove the last node for an index of 1 less than the size of the linked list', () => {
             const index = 4;
             const expectedLength = 4;
             const expectedTailVal = 5;
-            const sut = makePopulatedLinkedList();
+            const expectedTailPreviousVal = 3;
+            const sut = makePopulatedDoublyLinkedList();
             const expected = sut.tail;
 
             const actual = sut.remove(index);
@@ -371,24 +400,29 @@ describe('LinkedList', function() {
             actual.should.equal(expected);
             sut.length.should.equal(expectedLength);
             sut.tail.value.should.equal(expectedTailVal);
+            sut.tail.prev.value.should.equal(expectedTailPreviousVal);
+            should.not.exist(sut.tail.next);
         });
 
         it('should remove the expected node for in the middle of the linked list', () => {
             const index = 2;
             const expectedLength = 4;
-            const sut = makePopulatedLinkedList();
+            const sut = makePopulatedDoublyLinkedList();
             const expectedVal = 3;
 
             const actual = sut.remove(index);
 
             actual.value.should.equal(expectedVal);
             sut.length.should.equal(expectedLength);
+            const nodeAtIndex = sut.get(index);
+            nodeAtIndex.next.should.be.ok;
+            nodeAtIndex.prev.should.be.ok;
         });
 
         it('should not remove anything for a negative index', () => {
             const index = -1;
             const expectedLength = 5;
-            const sut = makePopulatedLinkedList();
+            const sut = makePopulatedDoublyLinkedList();
 
             const actual = sut.remove(index);
 
@@ -399,7 +433,7 @@ describe('LinkedList', function() {
         it('should not remove anything for an out of bounds index', () => {
             const index = 5;
             const expectedLength = 5;
-            const sut = makePopulatedLinkedList();
+            const sut = makePopulatedDoublyLinkedList();
 
             const actual = sut.remove(index);
 
@@ -408,79 +442,17 @@ describe('LinkedList', function() {
         });
     });
 
-    describe('reverse', function() {
-        it('should reverse a populated linked list', () => {
-            const expected = [8, 5, 3, 2, 1];
-            const len = expected.length;
-            const sut = makePopulatedLinkedList();
-
-            const actual = sut.reverse();
-
-            actual.head.value.should.equal(expected[0]);
-            actual.tail.value.should.equal(expected[len - 1]);
-            let currentNode = actual.head;
-            for (let i = 0; i < len; i++) {
-                currentNode.value.should.equal(expected[i]);
-                currentNode = currentNode.next;
-            }
-            should.not.exist(currentNode);
-            should.not.exist(actual.tail.next);
-        });
-
-        it('should reverse a small linked list', () => {
-            headVal = 9;
-            const expected = [10, 9];
-            const len = expected.length;
-            const sut = makeSut().push(10);
-
-            const actual = sut.reverse();
-
-            actual.head.value.should.equal(expected[0]);
-            actual.tail.value.should.equal(expected[len - 1]);
-            let currentNode = actual.head;
-            for (let i = 0; i < len; i++) {
-                currentNode.value.should.equal(expected[i]);
-                currentNode = currentNode.next;
-            }
-            should.not.exist(currentNode);
-            should.not.exist(actual.tail.next);
-        });
-
-        it('should take no action on an empty linked list', () => {
-            const expectedLength = 0;
-            const sut = makeEmptyLinkedList();
-
-            const actual = sut.reverse();
-
-            should.not.exist(actual.head);
-            should.not.exist(actual.tail);
-            actual.length.should.equal(expectedLength);
-        });
-
-        it('should take no action on a linked list with 1 item', () => {
-            headVal = 42;
-            const expectedLength = 1;
-            const sut = makeSut();
-
-            const actual = sut.reverse();
-
-            actual.length.should.equal(expectedLength);
-            actual.tail.should.equal(actual.head);
-            should.not.exist(actual.tail.next);
-        });
-    });
-
     function makeSut() {
-        return new LinkedList(headVal);
+        return new DoublyLinkedList(headVal);
     }
 
-    function makePopulatedLinkedList() {
+    function makePopulatedDoublyLinkedList() {
         headVal = 1;
         const sut = makeSut();
         return sut.push(2).push(3).push(5).push(8);
     }
 
-    function makeEmptyLinkedList() {
+    function makeEmptyDoublyLinkedList() {
         headVal = 0;
         const sut = makeSut();
         sut.pop();
