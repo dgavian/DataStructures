@@ -1,3 +1,5 @@
+'use strict';
+
 class LinkedList {
     constructor(value) {
         const newNode = new Node(value);
