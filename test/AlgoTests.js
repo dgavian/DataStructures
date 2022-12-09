@@ -97,6 +97,54 @@ describe('Algo', function() {
         });
     });
 
+    describe('mergeSort', function() {
+        it('should sort an unsorted array', () => {
+            const input = [5, 4, 7, 1, 3, 2, 8, 6];
+            const expected = [1, 2, 3, 4, 5, 6, 7, 8];
+            const sut = makeSut();
+
+            const actual = sut.mergeSort(input);
+
+            actual.should.deep.equal(expected);
+        });
+
+        it('should sort a small array', () => {
+            const input = [3, 1, 4, 2];
+            const expected = [1, 2, 3, 4];
+            const sut = makeSut();
+
+            const actual = sut.mergeSort(input);
+
+            actual.should.deep.equal(expected);
+        });
+    });
+
+    describe('pivot', function() {
+        it('should pivot the array as expected', () => {
+            const input = [4, 6, 1, 7, 3, 2, 5];
+            const expectedArr = [2, 1, 3, 4, 6, 7, 5];
+            const expected = 3;
+            const sut = makeSut();
+
+            const actual = sut.pivot(input);
+
+            actual.should.equal(expected);
+            input.should.deep.equal(expectedArr);
+        });
+    });
+
+    describe('quickSort', function() {
+        it('should sort the array as expected', () => {
+            const input = [4, 6, 1, 7, 3, 2, 5];
+            const expected = [1, 2, 3, 4, 5, 6, 7];
+            const sut = makeSut();
+
+            const actual = sut.quickSort(input);
+
+            actual.should.deep.equal(expected);
+        });
+    });
+
     function makeSut() {
         return new Algo();
     }

@@ -12,9 +12,7 @@ class Algo {
         for (let i = arr.length - 1; i > 0; i--) {
             for (let j = 0; j < i; j++) {
                 if (arr[j] > arr[j + 1]) {
-                    const temp = arr[j];
-                    arr[j] = arr[j + 1];
-                    arr[j + 1] = temp;
+                    this.#swap(arr, j, j + 1);
                 }
             }
         }
@@ -33,9 +31,7 @@ class Algo {
             }
 
             if (indexOfMin !== i) {
-                const temp = arr[i];
-                arr[i] = arr[indexOfMin];
-                arr[indexOfMin] = temp;
+                this.#swap(arr, i, indexOfMin);
             }
         }
         return arr;
@@ -51,6 +47,18 @@ class Algo {
             arr[j + 1] = temp;
         }
         return arr;
+    }
+
+    mergeSort(arr) {
+        const len = arr.length;
+        if (len === 1) {
+            return arr;
+        }
+        const mid = Math.floor(len / 2);
+        const left = arr.slice(0, mid);
+        const right = arr.slice(mid);
+
+        return this.merge(this.mergeSort(left), this.mergeSort(right));
     }
 
     merge(arr1, arr2) {
@@ -80,6 +88,33 @@ class Algo {
         }
 
         return result;
+    }
+
+    quickSort(arr, left = 0, right = arr.length - 1) {
+        if (left < right) {
+            const pivotIndex = this.pivot(arr, left, right);
+            this.quickSort(arr, left, pivotIndex - 1);
+            this.quickSort(arr, pivotIndex + 1, right);
+        }
+        return arr;
+    }
+
+    pivot(arr, pivotIndex = 0, endIndex = arr.length - 1) {
+        let swapIndex = pivotIndex;
+        for (let i = pivotIndex + 1; i <= endIndex; i++) {
+            if (arr[i] < arr[pivotIndex]) {
+                swapIndex++;
+                this.#swap(arr, swapIndex, i);
+            }
+        }
+        this.#swap(arr, pivotIndex, swapIndex);
+        return swapIndex;
+    }
+
+    #swap(arr, firstIndex, secondIndex) {
+        const temp = arr[firstIndex];
+        arr[firstIndex] = arr[secondIndex];
+        arr[secondIndex] = temp;
     }
 }
 

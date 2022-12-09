@@ -137,6 +137,29 @@ describe('BinarySearchTree', function() {
         });
     });
 
+    describe('breadthFirstSearch', function () {
+        it ('should return the expected array', () => {
+            const expected = [47, 21, 76, 18, 27, 52, 82];
+            const sut = makePopulatedTree(expected);
+
+            const actual = sut.breadthFirstSearch();
+
+            actual.should.deep.equal(expected);
+        });
+    });
+
+    describe('depthFirstSearchPreOrder', function () {
+        it ('should return the expected array', () => {
+            const input = [47, 21, 76, 18, 27, 52, 82];
+            const expected = [47, 21, 18, 27, 76, 52, 82]
+            const sut = makePopulatedTree(input);
+
+            const actual = sut.depthFirstSearchPreOrder();
+
+            actual.should.deep.equal(expected);
+        });
+    });
+
     function makeEmptyTree() {
         return new BinarySearchTree();
     }
