@@ -8,6 +8,23 @@ class Algo {
         return n * this.factorial(n - 1);
     }
 
+    fibonacci(n) {
+        if (n < 2) {
+            return n;
+        }
+
+        let first = 1;
+        let second = 2;
+
+        for (let i = 3; i <= n; i++) {
+            const current = first + second;
+            first = second;
+            second = current;
+        }
+
+        return second;
+    }
+
     bubbleSort(arr) {
         for (let i = arr.length - 1; i > 0; i--) {
             for (let j = 0; j < i; j++) {

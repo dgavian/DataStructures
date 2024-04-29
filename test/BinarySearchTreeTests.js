@@ -137,8 +137,8 @@ describe('BinarySearchTree', function() {
         });
     });
 
-    describe('breadthFirstSearch', function () {
-        it ('should return the expected array', () => {
+    describe('breadthFirstSearch', function() {
+        it('should return the expected array', () => {
             const expected = [47, 21, 76, 18, 27, 52, 82];
             const sut = makePopulatedTree(expected);
 
@@ -148,13 +148,37 @@ describe('BinarySearchTree', function() {
         });
     });
 
-    describe('depthFirstSearchPreOrder', function () {
-        it ('should return the expected array', () => {
+    describe('depthFirstSearchPreOrder', function() {
+        it('should return the expected array', () => {
             const input = [47, 21, 76, 18, 27, 52, 82];
-            const expected = [47, 21, 18, 27, 76, 52, 82]
+            const expected = [47, 21, 18, 27, 76, 52, 82];
             const sut = makePopulatedTree(input);
 
             const actual = sut.depthFirstSearchPreOrder();
+
+            actual.should.deep.equal(expected);
+        });
+    });
+
+    describe('depthFirstSearchPostOrder', function() {
+        it('should return the expected array', () => {
+            const input = [47, 21, 76, 18, 27, 52, 82];
+            const expected = [18, 27, 21, 52, 82, 76, 47];
+            const sut = makePopulatedTree(input);
+
+            const actual = sut.depthFirstSearchPostOrder();
+
+            actual.should.deep.equal(expected);
+        });
+    });
+
+    describe('depthFirstSearchInOrder', function() {
+        it('should return the expected array', () => {
+            const input = [47, 21, 76, 18, 27, 52, 82];
+            const expected = [18, 21, 27, 47, 52, 76, 82];
+            const sut = makePopulatedTree(input);
+
+            const actual = sut.depthFirstSearchInOrder();
 
             actual.should.deep.equal(expected);
         });

@@ -108,6 +108,36 @@ class BinarySearchTree {
         traverse(this.root);
         return result;
     }
+
+    depthFirstSearchPostOrder() {
+        const result = [];
+        const traverse = function(node) {
+            if (node.left) {
+                traverse(node.left);
+            }
+            if (node.right) {
+                traverse(node.right);
+            }
+            result.push(node.value);
+        };
+        traverse(this.root);
+        return result;
+    }
+
+    depthFirstSearchInOrder() {
+        const result = [];
+        const traverse = function(node) {
+            if (node.left) {
+                traverse(node.left);
+            }
+            result.push(node.value);
+            if (node.right) {
+                traverse(node.right);
+            }
+        };
+        traverse(this.root);
+        return result;
+    }
 }
 
 exports.BinarySearchTree = BinarySearchTree;
